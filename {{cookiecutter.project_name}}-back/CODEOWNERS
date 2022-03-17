@@ -1,0 +1,10 @@
+# CODE OWNERS
+
+# Cambios globales
+* @divilo/infrastructure @divilo/developers
+
+# Infraestructura
+*.yaml @divilo/infrastructure
+*.yml @divilo/infrastructure
+*.sh @divilo/infrastructure
+CODEOWNERS @divilo/infrastructure

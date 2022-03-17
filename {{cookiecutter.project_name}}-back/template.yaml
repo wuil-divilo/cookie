@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: devices-management-back SAM template
+Description: {{cookiecutter.project_name}}-back SAM template
 ###########################################
 # GLOBALS
 ###########################################
@@ -20,7 +20,7 @@ Parameters:
   DomainName:
     Description: Domain covered by the functions
     Type: String
-    Default: "devices-management"
+    Default: "{{cookiecutter.project_name}}"
   APIGatewayVersion:
     Description: API Gateway current version
     Type: String
@@ -89,14 +89,14 @@ Resources:
             ParameterName: divilo/apigateway/cors-allowed-origins
         - DynamoDBCrudPolicy:
             TableName:
-              Fn::ImportValue: devices-management-devices-table
+              Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}-table
       Environment:
         Variables:
           DOMAIN_NAME: !Ref DomainName
           LOG_LEVEL: /divilo/app/backend/global/log-level
           CORS_ALLOWED_ORIGINS: /divilo/apigateway/cors-allowed-origins
-          DEVICES_TABLE_NAME:
-            Fn::ImportValue: devices-management-devices-table
+          {{cookiecutter.model_name}}_TABLE_NAME:
+            Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}-table
       Events:
         ApiEvent:
           Type: Api

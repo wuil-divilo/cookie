@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  title: {{cookiecutter.model_name}} API
+  description: Divilo API to manage {{cookiecutter.model_name}}
+  version: 1.0.0
+servers:
+  - url: 'https://api.{environmentName}.divilodemo.com/{{cookiecutter.project_name}}'
+    variables:
+      environmentName:
+        default: erik
+        description: Environment name
+        enum:
+          - erik
+          - nakia
+          - okoye
+  - url: 'https://api.divilo.io/{{cookiecutter.project_name}}'
+security:
+  - jwtBearer: []
+paths:
+  /create-device:
+    post:
+      operationId: createdevice
+      x-divilo-roles:
+        - REPRESENTANTE_APODERADO
+      tags:
+        - {{cookiecutter.project_name}}
+      summary: Create a device that uses the APP.
+      security:
+        - jwtBearer: []
+      requestBody:
+        description: Device create request
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeviceRequest"
+        required: true
+      responses:
+        204:
+          description: Successful operation
+        400:
+          description: Bad request
+        401:
+          description: Authorization information is missing or invalid
+        403:
+          description: Forbidden
+        500:
+          description: Internal Server error
+components:
+  securitySchemes:
+    jwtBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    CreateDeviceRequest:
+      type: object
+      required:
+        - deviceId
+        - model
+        - hardwareVersion
+        - operatingSystemVersion
+        - appVersion
+        - apiLevel
+        - securityPatch
+        - isNfcAvailable
+        - isNfcEnabled
+      properties:
+        deviceId:
+          type: string
+          description: Device identification
+          format: uuid
+          example: "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,uuid4"
+        model:
+          type: string
+          description: Mobile model name
+          maxLength: 100
+          example: "Google Pixel 3"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        hardwareVersion:
+          type: string
+          description: Mobile hardware version
+          maxLength: 100
+          example: "Qualcomm Snapdragon 845"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        operatingSystemVersion:
+          type: string
+          description: Mobile operating system version
+          maxLength: 100
+          example: "Android 9.0"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        appVersion:
+          type: string
+          description: Version de Divilo APP
+          maxLength: 100
+          example: "1.2.2"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        apiLevel:
+          type: "string"
+          description: API revision offered by a version of the Android platform
+          maxLength: 100
+          example: "28"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        securityPatch:
+          type: string
+          description: Android software security patch update date
+          maxLength: 100
+          example: "2021-04-20"
+          x-oapi-codegen-extra-tags:
+            mod: "trim"
+            validate: "required,max=100"
+        isNfcAvailable:
+          type: boolean
+          description: Indicates if NFC is available
+          example: true
+          x-oapi-codegen-extra-tags:
+            validate: "required"
+        isNfcEnabled:
+          type: boolean
+          description: Indicates if NFC is enabled
+          example: true
+          x-oapi-codegen-extra-tags:
+            validate: "required"

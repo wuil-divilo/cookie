@@ -1,0 +1,26 @@
+### Device successfully created
+POST {{ServerUrl}}/{{cookiecutter.project_name}}/create-device
+Content-Type: application/json
+Origin: {{Origin}}
+Authorization: {{BearerToken}}
+
+{
+  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+  "model": "Google Pixel 3",
+  "hardwareVersion": "Qualcomm Snapdragon 845",
+  "operatingSystemVersion": "Android 9.0",
+  "appVersion": "1.2.2",
+  "apiLevel": "28",
+  "securityPatch": "2021-04-20",
+  "isNfcAvailable": true,
+  "isNfcEnabled": true
+}
+
+> {%
+client.test("Terminal created successfully", function() {
+  client.assert(response.status === 204, "Response status is not 204");
+});
+%}
+
+
+###
