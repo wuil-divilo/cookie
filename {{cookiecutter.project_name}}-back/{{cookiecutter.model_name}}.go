@@ -1,3 +1,3 @@
-func {{cookiecutter.lambda_name}}(){
+func {{cookiecutter.project_name}}(){
 	
 }
