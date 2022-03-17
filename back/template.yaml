@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: devices-management-back SAM template
+###########################################
+# GLOBALS
+###########################################
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: go1.x
+    MemorySize: 128
+    Tracing: Active
+    Tags:
+      DomainName: !Ref DomainName
+
+###########################################
+# PARAMETERS
+###########################################
+Parameters:
+  DomainName:
+    Description: Domain covered by the functions
+    Type: String
+    Default: "devices-management"
+  APIGatewayVersion:
+    Description: API Gateway current version
+    Type: String
+    Default: "v1"
+  APIDomainName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /divilo/apigateway/api-domain-name
+  Environment:
+    Description: Environment
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /divilo/global/environment
+
+###########################################
+# RESOURCES
+###########################################
+Resources:
+  ###########################################
+  # API GATEWAY
+  ###########################################
+  APIGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Ref DomainName
+      EndpointConfiguration: EDGE
+      StageName: !Ref APIGatewayVersion
+      TracingEnabled: true
+      OpenApiVersion: 3.0.1
+      Cors:
+        AllowHeaders: "'Access-Control-Allow-Origin, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, x-divilo-session-id, x-divilo-verification-signature'"
+        AllowOrigin: "'*'"
+        AllowMethods: "'OPTIONS'"
+      Auth:
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          ApiAuthorizationMiddleware:
+            FunctionArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:apigateway-authorizer-back-authorize-legal-person"
+            Identity:
+              Headers:
+                - "Authorization"
+                - "authorization"
+              ValidationExpression: "Bearer .*"
+              ReauthorizeEvery: 0
+            FunctionPayloadType: REQUEST
+
+  APIGatewayMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      BasePath: !Ref DomainName
+      DomainName: !Ref APIDomainName
+      RestApiId: !Ref APIGatewayApi
+      Stage: !Ref APIGatewayApi.Stage
+
+  ###########################################
+  # LAMBDA FUNCTIONS
+  ###########################################
+  CreateDeviceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${DomainName}-create-device"
+      CodeUri: lambda/createdevice/
+      Handler: createdevice
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: divilo/app/backend/global/log-level
+        - SSMParameterReadPolicy:
+            ParameterName: divilo/apigateway/cors-allowed-origins
+        - DynamoDBCrudPolicy:
+            TableName:
+              Fn::ImportValue: devices-management-devices-table
+      Environment:
+        Variables:
+          DOMAIN_NAME: !Ref DomainName
+          LOG_LEVEL: /divilo/app/backend/global/log-level
+          CORS_ALLOWED_ORIGINS: /divilo/apigateway/cors-allowed-origins
+          DEVICES_TABLE_NAME:
+            Fn::ImportValue: devices-management-devices-table
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /create-device
+            Method: POST
+            RestApiId: !Ref APIGatewayApi
+            Auth:
+              Authorizer: ApiAuthorizationMiddleware
