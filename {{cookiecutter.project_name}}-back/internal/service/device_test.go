@@ -14,75 +14,75 @@ import (
 	"testing"
 )
 
-func TestNew{{cookiecutter.model_name}}ervice(t *testing.T) {
+func TestNew{{cookiecutter.model_name.capitalize()}}Service(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	dvcRepoMock := mock.NewMockDeviceRepository(ctrl)
+	dvcRepoMock := mock.NewMock{{cookiecutter.model_name.capitalize()}}Repository(ctrl)
 	lgr := logger.NewEmpty()
 	type args struct {
 		logger     *zap.SugaredLogger
-		deviceRepo repository.DeviceRepository
+		{{cookiecutter.model_name}}Repo repository.{{cookiecutter.model_name.capitalize()}}Repository
 	}
 	tests := []struct {
 		name string
 		args args
-		want *{{cookiecutter.model_name}}ervice
+		want *{{cookiecutter.model_name}}Service
 	}{
 		{
 			name: "instantiates",
 			args: args{
 				logger:     lgr,
-				deviceRepo: dvcRepoMock,
+				{{cookiecutter.model_name}}Repo: dvcRepoMock,
 			},
-			want: &{{cookiecutter.model_name}}ervice{
+			want: &{{cookiecutter.model_name}}Service{
 				lgr:             lgr,
-				deviceRepo:      dvcRepoMock,
+				{{cookiecutter.model_name}}Repo:      dvcRepoMock,
 				createValidator: newCreateValidator(),
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, ok := New{{cookiecutter.model_name}}ervice(tt.args.logger, tt.args.deviceRepo).(*{{cookiecutter.model_name}}ervice)
+			got, ok := New{{cookiecutter.model_name.capitalize()}}Service(tt.args.logger, tt.args.{{cookiecutter.model_name}}Repo).(*{{cookiecutter.model_name}}Service)
 
 			//if ok is false is ERROR
-			if !ok || got.deviceRepo != tt.want.deviceRepo || got.lgr != tt.want.lgr || got.createValidator == nil {
-				t.Errorf("New{{cookiecutter.model_name}}ervice() = %v, want %v", got, tt.want)
+			if !ok || got.{{cookiecutter.model_name}}Repo != tt.want.{{cookiecutter.model_name}}Repo || got.lgr != tt.want.lgr || got.createValidator == nil {
+				t.Errorf("New{{cookiecutter.model_name.capitalize()}}Service() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
+func Test_{{cookiecutter.model_name}}Service_Create(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	dvcRepoMock := mock.NewMockDeviceRepository(ctrl)
+	dvcRepoMock := mock.NewMock{{cookiecutter.model_name.capitalize()}}Repository(ctrl)
 	lgr := logger.NewEmpty()
 	type fields struct {
 		lgr             *zap.SugaredLogger
-		deviceRepo      repository.DeviceRepository
+		{{cookiecutter.model_name}}Repo      repository.{{cookiecutter.model_name.capitalize()}}Repository
 		createValidator *validator.Validate
 	}
 	type args struct {
 		ctx    context.Context
-		device model.Device
+		{{cookiecutter.model_name}} model.{{cookiecutter.model_name.capitalize()}}
 	}
 	tests := []struct {
 		name           string
 		fields         fields
 		configureMocks func()
 		args           args
-		want           model.Device
+		want           model.{{cookiecutter.model_name.capitalize()}}
 		wantErr        bool
 	}{
 		{
 			name: "successful created",
 			fields: fields{
 				lgr:             lgr,
-				deviceRepo:      dvcRepoMock,
+				{{cookiecutter.model_name}}Repo:      dvcRepoMock,
 				createValidator: newCreateValidator(),
 			},
 			configureMocks: func() {
-				dvcRepoMock.EXPECT().Upsert(context.TODO(), model.Device{
-					DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+				dvcRepoMock.EXPECT().Upsert(context.TODO(), model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 					Model:         "Pixel 123",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -93,8 +93,8 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 					NFCEnabled:    false,
 					CreatedAt:     0,
 					UpdatedAt:     0,
-				}).Return(model.Device{
-					DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+				}).Return(model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 					Model:         "Pixel 123",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -109,8 +109,8 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 			},
 			args: args{
 				ctx: context.TODO(),
-				device: model.Device{
-					DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+				{{cookiecutter.model_name}}: model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 					Model:         "Pixel 123",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -123,8 +123,8 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 					UpdatedAt:     0,
 				},
 			},
-			want: model.Device{
-				DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+			want: model.{{cookiecutter.model_name.capitalize()}}{
+				{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 				Model:         "Pixel 123",
 				HwVersion:     "5",
 				OSVersion:     "98",
@@ -142,7 +142,7 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 			name: "validation error",
 			fields: fields{
 				lgr:             lgr,
-				deviceRepo:      dvcRepoMock,
+				{{cookiecutter.model_name}}Repo:      dvcRepoMock,
 				createValidator: newCreateValidator(),
 			},
 			configureMocks: func() {
@@ -150,8 +150,8 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 			},
 			args: args{
 				ctx: context.TODO(),
-				device: model.Device{
-					DeviceId:      "e2fa2039-",
+				{{cookiecutter.model_name}}: model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-",
 					Model:         "",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -164,19 +164,19 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 					UpdatedAt:     0,
 				},
 			},
-			want:    model.Device{},
+			want:    model.{{cookiecutter.model_name.capitalize()}}{},
 			wantErr: true,
 		},
 		{
 			name: "save error",
 			fields: fields{
 				lgr:             lgr,
-				deviceRepo:      dvcRepoMock,
+				{{cookiecutter.model_name}}Repo:      dvcRepoMock,
 				createValidator: newCreateValidator(),
 			},
 			configureMocks: func() {
-				dvcRepoMock.EXPECT().Upsert(context.TODO(), model.Device{
-					DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+				dvcRepoMock.EXPECT().Upsert(context.TODO(), model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 					Model:         "Pixel 123",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -187,12 +187,12 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 					NFCEnabled:    false,
 					CreatedAt:     0,
 					UpdatedAt:     0,
-				}).Return(model.Device{}, errors.New("unexpected error"))
+				}).Return(model.{{cookiecutter.model_name.capitalize()}}{}, errors.New("unexpected error"))
 			},
 			args: args{
 				ctx: context.TODO(),
-				device: model.Device{
-					DeviceId:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
+				{{cookiecutter.model_name}}: model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "e2fa2039-f7c4-455f-a6ca-b05db4149ed2",
 					Model:         "Pixel 123",
 					HwVersion:     "5",
 					OSVersion:     "98",
@@ -205,19 +205,19 @@ func Test_{{cookiecutter.model_name}}ervice_Create(t *testing.T) {
 					UpdatedAt:     0,
 				},
 			},
-			want:    model.Device{},
+			want:    model.{{cookiecutter.model_name.capitalize()}}{},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ds := &{{cookiecutter.model_name}}ervice{
+			ds := &{{cookiecutter.model_name}}Service{
 				lgr:             tt.fields.lgr,
-				deviceRepo:      tt.fields.deviceRepo,
+				{{cookiecutter.model_name}}Repo:      tt.fields.{{cookiecutter.model_name}}Repo,
 				createValidator: tt.fields.createValidator,
 			}
 			tt.configureMocks()
-			got, err := ds.Create(tt.args.ctx, tt.args.device)
+			got, err := ds.Create(tt.args.ctx, tt.args.{{cookiecutter.model_name}})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
 				return

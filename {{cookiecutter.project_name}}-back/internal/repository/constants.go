@@ -2,7 +2,7 @@ package repository
 
 // repository constants
 const (
-	TableColumnDeviceId            = "deviceId"
+	TableColumn{{cookiecutter.model_name.capitalize()}}Id            = "{{cookiecutter.model_name}}Id"
 	TableColumnCreatedAt           = "createdAt"
 	MsgErrorNotFound               = "not found"
 	MsgErrorMoreThanOneFound       = "more than one found"

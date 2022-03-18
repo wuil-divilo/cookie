@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/divilo/{{cookiecutter.project_name}}-back/internal/model"
 	"github.com/divilo/{{cookiecutter.project_name}}-back/internal/testing/repository/mock"
-	"github.com/divilo/{{cookiecutter.project_name}}-back/lambda/createdevice/internal"
+	"github.com/divilo/{{cookiecutter.project_name}}-back/lambda/create{{cookiecutter.model_name}}/internal"
 	"github.com/divilo/utils-go/service/logger"
 	"github.com/golang/mock/gomock"
 	"reflect"
@@ -14,20 +14,20 @@ import (
 
 func Test_main(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	dvcRepoMock := mock.NewMockDeviceRepository(ctrl)
+	dvcRepoMock := mock.NewMock{{cookiecutter.model_name.capitalize()}}Repository(ctrl)
 	builder := bootstrap()
 	builder.Set(globalConfig, &internal.Config{
 		DomainName:       "testing",
 		LogLevel:         "DEBUG",
 		CorsOrigins:      "testing",
-		{{cookiecutter.model_name}}TableName: "{{cookiecutter.model_name}}-table",
+		{{cookiecutter.model_name.capitalize()}}sTableName: "{{cookiecutter.model_name}}s-table",
 	})
 	builder.Set(loggerService, logger.New(logger.Config{
 		Level:      "DEBUG",
 		IsCloud:    false,
 		DomainName: "testing",
 	}))
-	builder.Set(deviceRepository, dvcRepoMock)
+	builder.Set({{cookiecutter.model_name}}Repository, dvcRepoMock)
 	handler := newHandler(builder)
 	type args struct {
 		ctx   context.Context
@@ -40,10 +40,10 @@ func Test_main(t *testing.T) {
 		want           *events.APIGatewayProxyResponse
 	}{
 		{
-			name: "new device success",
+			name: "new {{cookiecutter.model_name}} success",
 			configureMocks: func() {
-				dvcRepoMock.EXPECT().Upsert(gomock.Any(), gomock.Any()).Return(model.Device{
-					DeviceId:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+				dvcRepoMock.EXPECT().Upsert(gomock.Any(), gomock.Any()).Return(model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					Model:         "Google Pixel 3",
 					HwVersion:     "Qualcomm Snapdragon 845",
 					OSVersion:     "Android 9.0",
@@ -66,7 +66,7 @@ func Test_main(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",
@@ -89,7 +89,7 @@ func Test_main(t *testing.T) {
 			},
 		},
 		{
-			name: "device bad request in body",
+			name: "{{cookiecutter.model_name}} bad request in body",
 			configureMocks: func() {
 				return
 			},
@@ -98,7 +98,7 @@ func Test_main(t *testing.T) {
 				event: &events.APIGatewayProxyRequest{
 					RequestContext: events.APIGatewayProxyRequestContext{},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3"
 					}`,
 				},
@@ -114,7 +114,7 @@ func Test_main(t *testing.T) {
 			},
 		},
 		{
-			name: "device maxlength request in body",
+			name: "{{cookiecutter.model_name}} maxlength request in body",
 			configureMocks: func() {
 				return
 			},
@@ -127,7 +127,7 @@ func Test_main(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845Qualcomm Snapdragon 845Qualcomm Snapdragon 845Qualcomm Snapdragon 845Qualcomm Snapdragon 845Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",

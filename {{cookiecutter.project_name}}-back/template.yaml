@@ -76,12 +76,12 @@ Resources:
   ###########################################
   # LAMBDA FUNCTIONS
   ###########################################
-  CreateDeviceFunction:
+  Create{{cookiecutter.model_name.capitalize()}}Function:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub "${DomainName}-create-device"
-      CodeUri: lambda/createdevice/
-      Handler: createdevice
+      FunctionName: !Sub "${DomainName}-create-{{cookiecutter.model_name}}"
+      CodeUri: lambda/create{{cookiecutter.model_name}}/
+      Handler: create{{cookiecutter.model_name}}
       Policies:
         - SSMParameterReadPolicy:
             ParameterName: divilo/app/backend/global/log-level
@@ -89,19 +89,19 @@ Resources:
             ParameterName: divilo/apigateway/cors-allowed-origins
         - DynamoDBCrudPolicy:
             TableName:
-              Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}-table
+              Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}s-table
       Environment:
         Variables:
           DOMAIN_NAME: !Ref DomainName
           LOG_LEVEL: /divilo/app/backend/global/log-level
           CORS_ALLOWED_ORIGINS: /divilo/apigateway/cors-allowed-origins
-          {{cookiecutter.model_name}}_TABLE_NAME:
-            Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}-table
+          DEVICES_TABLE_NAME:
+            Fn::ImportValue: {{cookiecutter.project_name}}-{{cookiecutter.model_name}}s-table
       Events:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /create-device
+            Path: /create-{{cookiecutter.model_name}}
             Method: POST
             RestApiId: !Ref APIGatewayApi
             Auth:

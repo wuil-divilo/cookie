@@ -7,16 +7,16 @@ const (
 	JwtBearerScopes = "jwtBearer.Scopes"
 )
 
-// CreateDeviceRequest defines model for CreateDeviceRequest.
-type CreateDeviceRequest struct {
+// Create{{cookiecutter.model_name.capitalize()}}Request defines model for Create{{cookiecutter.model_name.capitalize()}}Request.
+type Create{{cookiecutter.model_name.capitalize()}}Request struct {
 	// API revision offered by a version of the Android platform
 	ApiLevel string `json:"apiLevel" mod:"trim" validate:"required,max=100"`
 
 	// Version de Divilo APP
 	AppVersion string `json:"appVersion" mod:"trim" validate:"required,max=100"`
 
-	// Device identification
-	DeviceId string `json:"deviceId" mod:"trim" validate:"required,uuid4"`
+	// {{cookiecutter.model_name.capitalize()}} identification
+	{{cookiecutter.model_name.capitalize()}}Id string `json:"{{cookiecutter.model_name}}Id" mod:"trim" validate:"required,uuid4"`
 
 	// Mobile hardware version
 	HardwareVersion string `json:"hardwareVersion" mod:"trim" validate:"required,max=100"`
@@ -37,8 +37,8 @@ type CreateDeviceRequest struct {
 	SecurityPatch string `json:"securityPatch" mod:"trim" validate:"required,max=100"`
 }
 
-// CreatedeviceJSONBody defines parameters for Createdevice.
-type CreatedeviceJSONBody CreateDeviceRequest
+// Create{{cookiecutter.model_name}}JSONBody defines parameters for Create{{cookiecutter.model_name}}.
+type Create{{cookiecutter.model_name}}JSONBody Create{{cookiecutter.model_name.capitalize()}}Request
 
-// CreatedeviceJSONRequestBody defines body for Createdevice for application/json ContentType.
-type CreatedeviceJSONRequestBody CreatedeviceJSONBody
+// Create{{cookiecutter.model_name}}JSONRequestBody defines body for Create{{cookiecutter.model_name}} for application/json ContentType.
+type Create{{cookiecutter.model_name}}JSONRequestBody Create{{cookiecutter.model_name}}JSONBody

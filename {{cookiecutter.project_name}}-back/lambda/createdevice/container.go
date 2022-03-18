@@ -8,7 +8,7 @@ import (
 	"github.com/divilo/aws-go/service/ssm"
 	"github.com/divilo/{{cookiecutter.project_name}}-back/internal/repository"
 	"github.com/divilo/{{cookiecutter.project_name}}-back/internal/service"
-	"github.com/divilo/{{cookiecutter.project_name}}-back/lambda/createdevice/internal"
+	"github.com/divilo/{{cookiecutter.project_name}}-back/lambda/create{{cookiecutter.model_name}}/internal"
 	"github.com/divilo/utils-go/interfaces"
 	"github.com/divilo/utils-go/middleware/cors"
 	"github.com/divilo/utils-go/service/config"
@@ -25,8 +25,8 @@ const (
 	corsMiddleware     = "corsMiddleware"
 	eventMapperService = "eventMapperService"
 	dynamodbClient     = "dynamodbClient"
-	deviceRepository   = "deviceRepository"
-	{{cookiecutter.model_name}}ervice      = "{{cookiecutter.model_name}}ervice"
+	{{cookiecutter.model_name}}Repository   = "{{cookiecutter.model_name}}Repository"
+	{{cookiecutter.model_name}}Service      = "{{cookiecutter.model_name}}Service"
 	handler            = "handler"
 )
 
@@ -84,21 +84,21 @@ func bootstrap() *di.Builder {
 		},
 	})
 	builder.Add(di.Def{
-		Name: deviceRepository,
+		Name: {{cookiecutter.model_name}}Repository,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return repository.NewDeviceRepository(
+			return repository.New{{cookiecutter.model_name.capitalize()}}Repository(
 				ctn.Get(loggerService).(*zap.SugaredLogger),
 				ctn.Get(dynamodbClient).(dynamodb.ServiceDynamo),
-				ctn.Get(globalConfig).(*internal.Config).{{cookiecutter.model_name}}TableName,
+				ctn.Get(globalConfig).(*internal.Config).{{cookiecutter.model_name.capitalize()}}sTableName,
 			), nil
 		},
 	})
 	builder.Add(di.Def{
-		Name: {{cookiecutter.model_name}}ervice,
+		Name: {{cookiecutter.model_name}}Service,
 		Build: func(ctn di.Container) (interface{}, error) {
-			return service.New{{cookiecutter.model_name}}ervice(
+			return service.New{{cookiecutter.model_name.capitalize()}}Service(
 				ctn.Get(loggerService).(*zap.SugaredLogger),
-				ctn.Get(deviceRepository).(repository.DeviceRepository),
+				ctn.Get({{cookiecutter.model_name}}Repository).(repository.{{cookiecutter.model_name.capitalize()}}Repository),
 			), nil
 		},
 	})
@@ -109,7 +109,7 @@ func bootstrap() *di.Builder {
 				ctn.Get(loggerService).(*zap.SugaredLogger),
 				ctn.Get(corsMiddleware).(interfaces.APIGatewayProxyMiddleware),
 				ctn.Get(eventMapperService).(eventmapper.ServiceEventMapper),
-				ctn.Get({{cookiecutter.model_name}}ervice).(service.{{cookiecutter.model_name}}ervice),
+				ctn.Get({{cookiecutter.model_name}}Service).(service.{{cookiecutter.model_name.capitalize()}}Service),
 			), nil
 		},
 	})

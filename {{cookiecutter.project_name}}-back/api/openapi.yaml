@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: {{cookiecutter.model_name}} API
-  description: Divilo API to manage {{cookiecutter.model_name}}
+  title: {{cookiecutter.model_name.capitalize()}}s API
+  description: Divilo API to manage {{cookiecutter.model_name}}s
   version: 1.0.0
 servers:
   - url: 'https://api.{environmentName}.divilodemo.com/{{cookiecutter.project_name}}'
@@ -17,22 +17,22 @@ servers:
 security:
   - jwtBearer: []
 paths:
-  /create-device:
+  /create-{{cookiecutter.model_name}}:
     post:
-      operationId: createdevice
+      operationId: create{{cookiecutter.model_name}}
       x-divilo-roles:
         - REPRESENTANTE_APODERADO
       tags:
         - {{cookiecutter.project_name}}
-      summary: Create a device that uses the APP.
+      summary: Create a {{cookiecutter.model_name}} that uses the APP.
       security:
         - jwtBearer: []
       requestBody:
-        description: Device create request
+        description: {{cookiecutter.model_name.capitalize()}} create request
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateDeviceRequest"
+              $ref: "#/components/schemas/Create{{cookiecutter.model_name.capitalize()}}Request"
         required: true
       responses:
         204:
@@ -52,10 +52,10 @@ components:
       scheme: bearer
       bearerFormat: jwt
   schemas:
-    CreateDeviceRequest:
+    Create{{cookiecutter.model_name.capitalize()}}Request:
       type: object
       required:
-        - deviceId
+        - {{cookiecutter.model_name}}Id
         - model
         - hardwareVersion
         - operatingSystemVersion
@@ -65,9 +65,9 @@ components:
         - isNfcAvailable
         - isNfcEnabled
       properties:
-        deviceId:
+        {{cookiecutter.model_name}}Id:
           type: string
-          description: Device identification
+          description: {{cookiecutter.model_name.capitalize()}} identification
           format: uuid
           example: "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
           x-oapi-codegen-extra-tags:

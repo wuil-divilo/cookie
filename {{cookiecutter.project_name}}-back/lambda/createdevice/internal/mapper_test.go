@@ -6,22 +6,22 @@ import (
 	"testing"
 )
 
-func Test_toModelDevice(t *testing.T) {
+func Test_toModel{{cookiecutter.model_name.capitalize()}}(t *testing.T) {
 	type args struct {
-		dvcReq *model.CreateDeviceRequest
+		dvcReq *model.Create{{cookiecutter.model_name.capitalize()}}Request
 	}
 	tests := []struct {
 		name string
 		args args
-		want *model.Device
+		want *model.{{cookiecutter.model_name.capitalize()}}
 	}{
 		{
-			name: "convert to device model",
+			name: "convert to {{cookiecutter.model_name}} model",
 			args: args{
-				dvcReq: &model.CreateDeviceRequest{
+				dvcReq: &model.Create{{cookiecutter.model_name.capitalize()}}Request{
 					ApiLevel:               "apilevel",
 					AppVersion:             "appversion",
-					DeviceId:               "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					{{cookiecutter.model_name.capitalize()}}Id:               "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					HardwareVersion:        "hardware version",
 					IsNfcAvailable:         true,
 					IsNfcEnabled:           false,
@@ -30,8 +30,8 @@ func Test_toModelDevice(t *testing.T) {
 					SecurityPatch:          "2021-10-25",
 				},
 			},
-			want: &model.Device{
-				DeviceId:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+			want: &model.{{cookiecutter.model_name.capitalize()}}{
+				{{cookiecutter.model_name.capitalize()}}Id:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 				Model:         "model1",
 				HwVersion:     "hardware version",
 				OSVersion:     "android os x.x",
@@ -47,9 +47,9 @@ func Test_toModelDevice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := toModelDevice(tt.args.dvcReq)
+			got := toModel{{cookiecutter.model_name.capitalize()}}(tt.args.dvcReq)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toModelDevice() = %v, want %v", got, tt.want)
+				t.Errorf("toModel{{cookiecutter.model_name.capitalize()}}() = %v, want %v", got, tt.want)
 			}
 		})
 	}

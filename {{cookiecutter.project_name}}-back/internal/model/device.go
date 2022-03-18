@@ -1,8 +1,8 @@
 package model
 
-//Device domain model
-type Device struct {
-	DeviceId      string `validateCreate:"required,uuid"`
+//{{cookiecutter.model_name.capitalize()}} domain model
+type {{cookiecutter.model_name.capitalize()}} struct {
+	{{cookiecutter.model_name.capitalize()}}Id      string `validateCreate:"required,uuid"`
 	Model         string `validateCreate:"required,max=100"`
 	HwVersion     string `validateCreate:"required,max=100"`
 	OSVersion     string `validateCreate:"required,max=100"`

@@ -14,12 +14,12 @@ type handler struct {
 	lgr            *zap.SugaredLogger
 	corsMiddleware interfaces.APIGatewayProxyMiddleware
 	eventMapper    eventmapper.ServiceEventMapper
-	{{cookiecutter.model_name}}ervice  service.{{cookiecutter.model_name}}ervice
+	{{cookiecutter.model_name}}Service  service.{{cookiecutter.model_name.capitalize()}}Service
 }
 
 // New returns a Handler instance
-func New(lgr *zap.SugaredLogger, corsMiddleware interfaces.APIGatewayProxyMiddleware, eventMapper eventmapper.ServiceEventMapper, {{cookiecutter.model_name}}ervice service.{{cookiecutter.model_name}}ervice) interfaces.APIGatewayProxyHandler {
-	return &handler{lgr, corsMiddleware, eventMapper, {{cookiecutter.model_name}}ervice}
+func New(lgr *zap.SugaredLogger, corsMiddleware interfaces.APIGatewayProxyMiddleware, eventMapper eventmapper.ServiceEventMapper, {{cookiecutter.model_name}}Service service.{{cookiecutter.model_name.capitalize()}}Service) interfaces.APIGatewayProxyHandler {
+	return &handler{lgr, corsMiddleware, eventMapper, {{cookiecutter.model_name}}Service}
 }
 
 // HandleProxy implements API Gateway proxy events handling
@@ -28,7 +28,7 @@ func (h handler) HandleProxy() interfaces.APIGatewayProxyHandlerFunc {
 		func(ctx context.Context, event *events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 			defer h.lgr.Sync()
 			lgr := h.lgr.With("APIGatewayProxyRequest", event)
-			lgr.Debug("create device request")
+			lgr.Debug("create {{cookiecutter.model_name}} request")
 			var req = &handlerRequest{}
 			// Map request and validate
 			err := h.eventMapper.FromProxyRequest(event, req)
@@ -38,8 +38,8 @@ func (h handler) HandleProxy() interfaces.APIGatewayProxyHandlerFunc {
 			}
 
 			// Do
-			dvc := toModelDevice(&req.CreateDeviceRequest)
-			_, err = h.{{cookiecutter.model_name}}ervice.Create(ctx, *dvc)
+			dvc := toModel{{cookiecutter.model_name.capitalize()}}(&req.Create{{cookiecutter.model_name.capitalize()}}Request)
+			_, err = h.{{cookiecutter.model_name}}Service.Create(ctx, *dvc)
 			if err != nil {
 				lgr.Errorw("Unexpected error", zap.Error(err))
 				return h.eventMapper.ToProxyResponse(http.StatusInternalServerError, "")

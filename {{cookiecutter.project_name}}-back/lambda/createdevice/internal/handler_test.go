@@ -23,12 +23,12 @@ func TestNew(t *testing.T) {
 	lgr := logger.NewEmpty()
 	corsMidMock := utilsmock.NewMockAPIGatewayProxyMiddleware(ctrl)
 	evtMapMock := utilsmock.NewMockServiceEventMapper(ctrl)
-	dvcSrvMock := mock.NewMock{{cookiecutter.model_name}}ervice(ctrl)
+	dvcSrvMock := mock.NewMock{{cookiecutter.model_name.capitalize()}}Service(ctrl)
 	type args struct {
 		lgr            *zap.SugaredLogger
 		corsMiddleware interfaces.APIGatewayProxyMiddleware
 		eventMapper    eventmapper.ServiceEventMapper
-		{{cookiecutter.model_name}}ervice  service.{{cookiecutter.model_name}}ervice
+		{{cookiecutter.model_name}}Service  service.{{cookiecutter.model_name.capitalize()}}Service
 	}
 	tests := []struct {
 		name string
@@ -41,19 +41,19 @@ func TestNew(t *testing.T) {
 				lgr:            lgr,
 				corsMiddleware: corsMidMock,
 				eventMapper:    evtMapMock,
-				{{cookiecutter.model_name}}ervice:  dvcSrvMock,
+				{{cookiecutter.model_name}}Service:  dvcSrvMock,
 			},
 			want: &handler{
 				lgr:            lgr,
 				corsMiddleware: corsMidMock,
 				eventMapper:    evtMapMock,
-				{{cookiecutter.model_name}}ervice:  dvcSrvMock,
+				{{cookiecutter.model_name}}Service:  dvcSrvMock,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.lgr, tt.args.corsMiddleware, tt.args.eventMapper, tt.args.{{cookiecutter.model_name}}ervice); !reflect.DeepEqual(got, tt.want) {
+			if got := New(tt.args.lgr, tt.args.corsMiddleware, tt.args.eventMapper, tt.args.{{cookiecutter.model_name}}Service); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
@@ -65,12 +65,12 @@ func Test_handler_HandleProxy(t *testing.T) {
 	lgr := logger.NewEmpty()
 	corsMidMock := utilsmock.NewMockAPIGatewayProxyMiddleware(ctrl)
 	evtMapMock := utilsmock.NewMockServiceEventMapper(ctrl)
-	dvcSrvMock := mock.NewMock{{cookiecutter.model_name}}ervice(ctrl)
+	dvcSrvMock := mock.NewMock{{cookiecutter.model_name.capitalize()}}Service(ctrl)
 	type fields struct {
 		lgr            *zap.SugaredLogger
 		corsMiddleware interfaces.APIGatewayProxyMiddleware
 		eventMapper    eventmapper.ServiceEventMapper
-		{{cookiecutter.model_name}}ervice  service.{{cookiecutter.model_name}}ervice
+		{{cookiecutter.model_name}}Service  service.{{cookiecutter.model_name.capitalize()}}Service
 	}
 	type args struct {
 		ctx   context.Context
@@ -84,12 +84,12 @@ func Test_handler_HandleProxy(t *testing.T) {
 		want           *events.APIGatewayProxyResponse
 	}{
 		{
-			name: "handle successfully upsert device",
+			name: "handle successfully upsert {{cookiecutter.model_name}}",
 			fields: fields{
 				lgr:            lgr,
 				corsMiddleware: corsMidMock,
 				eventMapper:    evtMapMock,
-				{{cookiecutter.model_name}}ervice:  dvcSrvMock,
+				{{cookiecutter.model_name}}Service:  dvcSrvMock,
 			},
 			configureMocks: func() {
 				corsMidMock.EXPECT().ProxyMiddleware(gomock.Any()).DoAndReturn(
@@ -104,7 +104,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",
@@ -116,7 +116,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 					}`,
 				}, &handlerRequest{}).DoAndReturn(func(event *events.APIGatewayProxyRequest, output *handlerRequest) error {
 					output.UserID = "user-id"
-					output.DeviceId = "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
+					output.{{cookiecutter.model_name.capitalize()}}Id = "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
 					output.Model = "Google Pixel 3"
 					output.HardwareVersion = "Qualcomm Snapdragon 845"
 					output.AppVersion = "1.2.2"
@@ -134,8 +134,8 @@ func Test_handler_HandleProxy(t *testing.T) {
 					},
 					Body: `""`,
 				}, nil)
-				dvcSrvMock.EXPECT().Create(context.TODO(), model.Device{
-					DeviceId:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+				dvcSrvMock.EXPECT().Create(context.TODO(), model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					Model:         "Google Pixel 3",
 					HwVersion:     "Qualcomm Snapdragon 845",
 					OSVersion:     "Android 9.0",
@@ -146,8 +146,8 @@ func Test_handler_HandleProxy(t *testing.T) {
 					NFCEnabled:    true,
 					CreatedAt:     0,
 					UpdatedAt:     0,
-				}).Return(model.Device{
-					DeviceId:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+				}).Return(model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					Model:         "Google Pixel 3",
 					HwVersion:     "Qualcomm Snapdragon 845",
 					OSVersion:     "Android 9.0",
@@ -169,7 +169,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",
@@ -197,7 +197,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 				lgr:            lgr,
 				corsMiddleware: corsMidMock,
 				eventMapper:    evtMapMock,
-				{{cookiecutter.model_name}}ervice:  dvcSrvMock,
+				{{cookiecutter.model_name}}Service:  dvcSrvMock,
 			},
 			configureMocks: func() {
 				corsMidMock.EXPECT().ProxyMiddleware(gomock.Any()).DoAndReturn(
@@ -211,7 +211,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 							"username": "user-id",
 						},
 					},
-					Body: `{"deviceId":"", "model":""}`,
+					Body: `{"{{cookiecutter.model_name}}Id":"", "model":""}`,
 				}, &handlerRequest{}).Return(errors.New("error"))
 				evtMapMock.EXPECT().ToProxyResponse(http.StatusBadRequest, "").Return(&events.APIGatewayProxyResponse{
 					StatusCode: 400,
@@ -229,7 +229,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 							"username": "user-id",
 						},
 					},
-					Body: `{"deviceId":"", "model":""}`,
+					Body: `{"{{cookiecutter.model_name}}Id":"", "model":""}`,
 				},
 			},
 			want: &events.APIGatewayProxyResponse{
@@ -246,7 +246,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 				lgr:            lgr,
 				corsMiddleware: corsMidMock,
 				eventMapper:    evtMapMock,
-				{{cookiecutter.model_name}}ervice:  dvcSrvMock,
+				{{cookiecutter.model_name}}Service:  dvcSrvMock,
 			},
 			configureMocks: func() {
 				corsMidMock.EXPECT().ProxyMiddleware(gomock.Any()).DoAndReturn(
@@ -261,7 +261,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",
@@ -273,7 +273,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 					}`,
 				}, &handlerRequest{}).DoAndReturn(func(event *events.APIGatewayProxyRequest, output *handlerRequest) error {
 					output.UserID = "user-id"
-					output.DeviceId = "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
+					output.{{cookiecutter.model_name.capitalize()}}Id = "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27"
 					output.Model = "Google Pixel 3"
 					output.HardwareVersion = "Qualcomm Snapdragon 845"
 					output.AppVersion = "1.2.2"
@@ -291,8 +291,8 @@ func Test_handler_HandleProxy(t *testing.T) {
 					},
 					Body: "",
 				}, nil)
-				dvcSrvMock.EXPECT().Create(context.TODO(), model.Device{
-					DeviceId:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+				dvcSrvMock.EXPECT().Create(context.TODO(), model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					Model:         "Google Pixel 3",
 					HwVersion:     "Qualcomm Snapdragon 845",
 					OSVersion:     "Android 9.0",
@@ -303,7 +303,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 					NFCEnabled:    true,
 					CreatedAt:     0,
 					UpdatedAt:     0,
-				}).Return(model.Device{}, errors.New("service error"))
+				}).Return(model.{{cookiecutter.model_name.capitalize()}}{}, errors.New("service error"))
 			},
 			args: args{
 				context.TODO(),
@@ -314,7 +314,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 						},
 					},
 					Body: `{
-					  "deviceId": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
+					  "{{cookiecutter.model_name}}Id": "1f066b37-c8f5-40cb-bf7b-5b7eda60dd27",
 					  "model": "Google Pixel 3",
 					  "hardwareVersion": "Qualcomm Snapdragon 845",
 					  "operatingSystemVersion": "Android 9.0",
@@ -341,7 +341,7 @@ func Test_handler_HandleProxy(t *testing.T) {
 				lgr:            tt.fields.lgr,
 				corsMiddleware: tt.fields.corsMiddleware,
 				eventMapper:    tt.fields.eventMapper,
-				{{cookiecutter.model_name}}ervice:  tt.fields.{{cookiecutter.model_name}}ervice,
+				{{cookiecutter.model_name}}Service:  tt.fields.{{cookiecutter.model_name}}Service,
 			}
 			tt.configureMocks()
 			if got, _ := h.HandleProxy()(tt.args.ctx, tt.args.event); !reflect.DeepEqual(got, tt.want) {

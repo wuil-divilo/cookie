@@ -23,10 +23,10 @@ import (
 )
 
 const (
-	DeviceTableName = "{{cookiecutter.project_name}}-{{cookiecutter.model_name}}"
+	{{cookiecutter.model_name.capitalize()}}TableName = "{{cookiecutter.project_name}}-{{cookiecutter.model_name}}s"
 )
 
-func TestNewDeviceRepository(t *testing.T) {
+func TestNew{{cookiecutter.model_name.capitalize()}}Repository(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	dynCltMock := mock.NewMockServiceDynamo(ctrl)
 	type args struct {
@@ -40,57 +40,57 @@ func TestNewDeviceRepository(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want DeviceRepository
+		want {{cookiecutter.model_name.capitalize()}}Repository
 	}{
 		{
 			name: "instantiates ok",
 			args: args{
 				lgr:     logger,
 				dynClt:  dynCltMock,
-				tblName: DeviceTableName,
+				tblName: {{cookiecutter.model_name.capitalize()}}TableName,
 			},
-			want: &deviceRepository{
+			want: &{{cookiecutter.model_name}}Repository{
 				lgr:     logger,
 				dynClt:  dynCltMock,
-				tblName: DeviceTableName,
+				tblName: {{cookiecutter.model_name.capitalize()}}TableName,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewDeviceRepository(tt.args.lgr, tt.args.dynClt, tt.args.tblName); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewDeviceRepository() = %v, want %v", got, tt.want)
+			if got := New{{cookiecutter.model_name.capitalize()}}Repository(tt.args.lgr, tt.args.dynClt, tt.args.tblName); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("New{{cookiecutter.model_name.capitalize()}}Repository() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_deviceRepository_Upsert(t *testing.T) {
+func Test_{{cookiecutter.model_name}}Repository_Upsert(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	dynCltMock := mock.NewMockServiceDynamo(ctrl)
 	lg := utillogger.NewEmpty()
 
-	//arguments for create device repository
-	argsRepository := deviceRepository{
+	//arguments for create {{cookiecutter.model_name}} repository
+	argsRepository := {{cookiecutter.model_name}}Repository{
 		lgr:     lg,
 		dynClt:  dynCltMock,
-		tblName: DeviceTableName,
+		tblName: {{cookiecutter.model_name.capitalize()}}TableName,
 	}
 
 	//arguments for function to testing Insert
 	type args struct {
 		ctx    context.Context
-		device model.Device
+		{{cookiecutter.model_name}} model.{{cookiecutter.model_name.capitalize()}}
 	}
 
 	//Test suite
 	tests := []struct {
 		name           string
-		argsRepo       deviceRepository
+		argsRepo       {{cookiecutter.model_name}}Repository
 		configureMocks func()
 		args           args
-		wantAssert     func(got model.Device) bool
+		wantAssert     func(got model.{{cookiecutter.model_name.capitalize()}}) bool
 		wantErr        bool
 	}{
 		{
@@ -103,9 +103,9 @@ func Test_deviceRepository_Upsert(t *testing.T) {
 			},
 			args: args{
 				ctx:    context.TODO(),
-				device: getTestData().deviceNew,
+				{{cookiecutter.model_name}}: getTestData().{{cookiecutter.model_name}}New,
 			},
-			wantAssert: func(got model.Device) bool { return true },
+			wantAssert: func(got model.{{cookiecutter.model_name.capitalize()}}) bool { return true },
 			wantErr:    true,
 		},
 		{
@@ -118,11 +118,11 @@ func Test_deviceRepository_Upsert(t *testing.T) {
 			},
 			args: args{
 				ctx:    context.TODO(),
-				device: getTestData().deviceNew,
+				{{cookiecutter.model_name}}: getTestData().{{cookiecutter.model_name}}New,
 			},
-			wantAssert: func(got model.Device) bool {
-				want := getTestData().deviceNew
-				return compare{{cookiecutter.model_name}}WithoutDates(&got, &want)
+			wantAssert: func(got model.{{cookiecutter.model_name.capitalize()}}) bool {
+				want := getTestData().{{cookiecutter.model_name}}New
+				return compare{{cookiecutter.model_name.capitalize()}}sWithoutDates(&got, &want)
 			},
 			wantErr: false,
 		},
@@ -136,11 +136,11 @@ func Test_deviceRepository_Upsert(t *testing.T) {
 			},
 			args: args{
 				ctx:    context.TODO(),
-				device: getTestData().deviceNew,
+				{{cookiecutter.model_name}}: getTestData().{{cookiecutter.model_name}}New,
 			},
-			wantAssert: func(got model.Device) bool {
-				want := getTestData().deviceFound
-				return compare{{cookiecutter.model_name}}WithoutUpdatedAt(&got, &want)
+			wantAssert: func(got model.{{cookiecutter.model_name.capitalize()}}) bool {
+				want := getTestData().{{cookiecutter.model_name}}Found
+				return compare{{cookiecutter.model_name.capitalize()}}sWithoutUpdatedAt(&got, &want)
 			},
 			wantErr: false,
 		},
@@ -149,13 +149,13 @@ func Test_deviceRepository_Upsert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			dr := NewDeviceRepository(tt.argsRepo.lgr, tt.argsRepo.dynClt, tt.argsRepo.tblName)
+			dr := New{{cookiecutter.model_name.capitalize()}}Repository(tt.argsRepo.lgr, tt.argsRepo.dynClt, tt.argsRepo.tblName)
 
 			//Configure mock
 			tt.configureMocks()
 
 			//Testing Upsert
-			got, err := dr.Upsert(tt.args.ctx, tt.args.device)
+			got, err := dr.Upsert(tt.args.ctx, tt.args.{{cookiecutter.model_name}})
 
 			//Check result test
 			if (err != nil) != tt.wantErr {
@@ -169,32 +169,32 @@ func Test_deviceRepository_Upsert(t *testing.T) {
 	}
 }
 
-func Test_deviceRepository_FilterByID(t *testing.T) {
+func Test_{{cookiecutter.model_name}}Repository_FilterByID(t *testing.T) {
 
 	//Create mock dynamoClient (ServiceDynamo)
 	ctrl := gomock.NewController(t)
 	dynCltMock := mock.NewMockServiceDynamo(ctrl)
 
-	//arguments for create device repository
-	argsRepository := deviceRepository{
+	//arguments for create {{cookiecutter.model_name}} repository
+	argsRepository := {{cookiecutter.model_name}}Repository{
 		lgr:     utillogger.NewEmpty(),
 		dynClt:  dynCltMock,
-		tblName: DeviceTableName,
+		tblName: {{cookiecutter.model_name.capitalize()}}TableName,
 	}
 
 	//arguments for function to testing FilterByID
 	type args struct {
 		ctx      context.Context
-		deviceId string
+		{{cookiecutter.model_name}}Id string
 	}
 
 	//Test suite
 	tests := []struct {
 		name           string
-		argsRepo       deviceRepository
+		argsRepo       {{cookiecutter.model_name}}Repository
 		configureMocks func()
 		args           args
-		want           model.Device
+		want           model.{{cookiecutter.model_name.capitalize()}}
 		wantErr        bool
 	}{
 		{
@@ -206,10 +206,10 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 					Return(nil, errors.New("operation error DynamoDB: Query"))
 			},
 			args: args{
-				deviceId: "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
+				{{cookiecutter.model_name}}Id: "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
 				ctx:      context.TODO(),
 			},
-			want:    getTestData().deviceEmpty,
+			want:    getTestData().{{cookiecutter.model_name}}Empty,
 			wantErr: true,
 		},
 		{
@@ -221,10 +221,10 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 					Return(getTestData().queryOutputEmpty, nil)
 			},
 			args: args{
-				deviceId: "b5c43ec4-4f23-4118-a497-09563f2ddf30",
+				{{cookiecutter.model_name}}Id: "b5c43ec4-4f23-4118-a497-09563f2ddf30",
 				ctx:      context.TODO(),
 			},
-			want:    getTestData().deviceEmpty,
+			want:    getTestData().{{cookiecutter.model_name}}Empty,
 			wantErr: true,
 		},
 		{
@@ -236,10 +236,10 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 					Return(getTestData().queryOutputTwoItemsFound, nil)
 			},
 			args: args{
-				deviceId: "b5c43ec4-4f23-4118-a497-09563f2ddf30",
+				{{cookiecutter.model_name}}Id: "b5c43ec4-4f23-4118-a497-09563f2ddf30",
 				ctx:      context.TODO(),
 			},
-			want:    getTestData().deviceEmpty,
+			want:    getTestData().{{cookiecutter.model_name}}Empty,
 			wantErr: true,
 		},
 		{
@@ -251,10 +251,10 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 					Return(getTestData().queryOutputItemFound, nil)
 			},
 			args: args{
-				deviceId: "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
+				{{cookiecutter.model_name}}Id: "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
 				ctx:      context.TODO(),
 			},
-			want:    getTestData().deviceFound,
+			want:    getTestData().{{cookiecutter.model_name}}Found,
 			wantErr: false,
 		},
 	}
@@ -262,13 +262,13 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			dr := NewDeviceRepository(tt.argsRepo.lgr, tt.argsRepo.dynClt, tt.argsRepo.tblName)
+			dr := New{{cookiecutter.model_name.capitalize()}}Repository(tt.argsRepo.lgr, tt.argsRepo.dynClt, tt.argsRepo.tblName)
 
 			//Configure mock
 			tt.configureMocks()
 
 			//Testing FilterByID
-			got, err := dr.FilterByID(tt.args.ctx, tt.args.deviceId)
+			got, err := dr.FilterByID(tt.args.ctx, tt.args.{{cookiecutter.model_name}}Id)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FilterByID() error = %v, wantErr %v", err, tt.wantErr)
@@ -283,9 +283,9 @@ func Test_deviceRepository_FilterByID(t *testing.T) {
 
 // TEST DATA need for testing
 type TestData struct {
-	deviceEmpty              model.Device
-	deviceNew                model.Device
-	deviceFound              model.Device
+	{{cookiecutter.model_name}}Empty              model.{{cookiecutter.model_name.capitalize()}}
+	{{cookiecutter.model_name}}New                model.{{cookiecutter.model_name.capitalize()}}
+	{{cookiecutter.model_name}}Found              model.{{cookiecutter.model_name.capitalize()}}
 	queryInputExist          *dynamodb.QueryInput
 	queryInputNotExist       *dynamodb.QueryInput
 	queryOutputEmpty         *dynamodb.QueryOutput
@@ -295,8 +295,8 @@ type TestData struct {
 
 func getTestData() TestData {
 
-	deviceNew := createDeviceNew()
-	deviceFound := createDeviceFound()
+	{{cookiecutter.model_name}}New := create{{cookiecutter.model_name.capitalize()}}New()
+	{{cookiecutter.model_name}}Found := create{{cookiecutter.model_name.capitalize()}}Found()
 	queryInputExist := createQueryInputExist()
 	queryInputNotExist := createQueryInputNotExist()
 	queryOutputEmpty := createQueryOutputEmpty()
@@ -304,9 +304,9 @@ func getTestData() TestData {
 	queryOutputTwoItemsFound := createQueryOutputTwoItemsFound()
 
 	testData := TestData{
-		deviceEmpty:              model.Device{},
-		deviceNew:                deviceNew,
-		deviceFound:              deviceFound,
+		{{cookiecutter.model_name}}Empty:              model.{{cookiecutter.model_name.capitalize()}}{},
+		{{cookiecutter.model_name}}New:                {{cookiecutter.model_name}}New,
+		{{cookiecutter.model_name}}Found:              {{cookiecutter.model_name}}Found,
 		queryInputExist:          &queryInputExist,
 		queryInputNotExist:       &queryInputNotExist,
 		queryOutputEmpty:         &queryOutputEmpty,
@@ -316,9 +316,9 @@ func getTestData() TestData {
 	return testData
 }
 
-func createDeviceNew() model.Device {
-	deviceNew := model.Device{
-		DeviceId:      "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
+func create{{cookiecutter.model_name.capitalize()}}New() model.{{cookiecutter.model_name.capitalize()}} {
+	{{cookiecutter.model_name}}New := model.{{cookiecutter.model_name.capitalize()}}{
+		{{cookiecutter.model_name.capitalize()}}Id:      "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
 		Model:         "model",
 		HwVersion:     "hwversion",
 		OSVersion:     "osversion",
@@ -330,12 +330,12 @@ func createDeviceNew() model.Device {
 		CreatedAt:     0,
 		UpdatedAt:     0,
 	}
-	return deviceNew
+	return {{cookiecutter.model_name}}New
 }
 
-func createDeviceFound() model.Device {
-	deviceFound := model.Device{
-		DeviceId:      "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
+func create{{cookiecutter.model_name.capitalize()}}Found() model.{{cookiecutter.model_name.capitalize()}} {
+	{{cookiecutter.model_name}}Found := model.{{cookiecutter.model_name.capitalize()}}{
+		{{cookiecutter.model_name.capitalize()}}Id:      "81a0aabc-7fe1-4b42-a387-d9f685a212e3",
 		Model:         "model",
 		HwVersion:     "hwversion",
 		OSVersion:     "osversion",
@@ -347,15 +347,15 @@ func createDeviceFound() model.Device {
 		CreatedAt:     1643245234,
 		UpdatedAt:     1643245234,
 	}
-	return deviceFound
+	return {{cookiecutter.model_name}}Found
 }
 
-func createQueryInput(deviceId string) dynamodb.QueryInput {
-	device := model.Device{}
-	device.DeviceId = deviceId
-	cond := expression.Key(TableColumnDeviceId).Equal(expression.Value(&types.AttributeValueMemberS{Value: device.DeviceId}))
+func createQueryInput({{cookiecutter.model_name}}Id string) dynamodb.QueryInput {
+	{{cookiecutter.model_name}} := model.{{cookiecutter.model_name.capitalize()}}{}
+	{{cookiecutter.model_name}}.{{cookiecutter.model_name.capitalize()}}Id = {{cookiecutter.model_name}}Id
+	cond := expression.Key(TableColumn{{cookiecutter.model_name.capitalize()}}Id).Equal(expression.Value(&types.AttributeValueMemberS{Value: {{cookiecutter.model_name}}.{{cookiecutter.model_name.capitalize()}}Id}))
 	expr, _ := expression.NewBuilder().WithKeyCondition(cond).Build()
-	tableName := DeviceTableName
+	tableName := {{cookiecutter.model_name.capitalize()}}TableName
 	queryInput := dynamodb.QueryInput{
 		TableName:                 aws.String(tableName),
 		ExpressionAttributeNames:  expr.Names(),
@@ -389,7 +389,7 @@ func createQueryOutputItemFound() dynamodb.QueryOutput {
 
 	var outputItemFound = createQueryOutputEmpty()
 	var itemFound = map[string]types.AttributeValue{
-		"deviceId": &types.AttributeValueMemberS{Value: "81a0aabc-7fe1-4b42-a387-d9f685a212e3"},
+		"{{cookiecutter.model_name}}Id": &types.AttributeValueMemberS{Value: "81a0aabc-7fe1-4b42-a387-d9f685a212e3"},
 		"Meta": &types.AttributeValueMemberM{
 			Value: map[string]types.AttributeValue{
 				"model":         &types.AttributeValueMemberS{Value: "model"},
@@ -464,7 +464,7 @@ func (m updateMatcher) Matches(x interface{}) bool {
 			updateBuilder = updateBuilder.Set(expression.Name(namesKeys[i]), expression.IfNotExists(expression.Name(namesKeys[i]), expression.Value(0)))
 			continue
 		}
-		if namesKeys[i] != TableColumnDeviceId {
+		if namesKeys[i] != TableColumn{{cookiecutter.model_name.capitalize()}}Id {
 			updateBuilder = updateBuilder.Set(expression.Name(namesKeys[i]), expression.Value(0))
 		}
 	}
@@ -487,11 +487,11 @@ func (m updateMatcher) Matches(x interface{}) bool {
 		Key(valuesKeys["meta"], metaAttributesValues)
 
 	keyValue := extra.MapMatcher().
-		Key("deviceId", gomock.Eq(&types.AttributeValueMemberS{Value: "81a0aabc-7fe1-4b42-a387-d9f685a212e3"}))
+		Key("{{cookiecutter.model_name}}Id", gomock.Eq(&types.AttributeValueMemberS{Value: "81a0aabc-7fe1-4b42-a387-d9f685a212e3"}))
 
 	updateItemMatcher := extra.StructMatcher().
 		Field("Key", keyValue).
-		Field("TableName", gomock.Eq(aws.String(DeviceTableName))).
+		Field("TableName", gomock.Eq(aws.String({{cookiecutter.model_name.capitalize()}}TableName))).
 		Field("ExpressionAttributeNames", gomock.Eq(expr.Names())).
 		Field("ExpressionAttributeValues", expressionAttributeValues).
 		Field("ReturnValues", types.ReturnValueAllOld).
@@ -504,10 +504,10 @@ func (m updateMatcher) String() string {
 	return "UpdateItemInput"
 }
 
-// ASSERTS compare results {{cookiecutter.model_name}}
+// ASSERTS compare results {{cookiecutter.model_name.capitalize()}}s
 //compare without dates (no compare dates because change in every insert)
-func compare{{cookiecutter.model_name}}WithoutDates(a, b *model.Device) bool {
-	aux := new(model.Device)
+func compare{{cookiecutter.model_name.capitalize()}}sWithoutDates(a, b *model.{{cookiecutter.model_name.capitalize()}}) bool {
+	aux := new(model.{{cookiecutter.model_name.capitalize()}})
 	*aux = *a
 	aux.CreatedAt = b.CreatedAt
 	aux.UpdatedAt = b.UpdatedAt
@@ -515,8 +515,8 @@ func compare{{cookiecutter.model_name}}WithoutDates(a, b *model.Device) bool {
 }
 
 //compare without updatedat (no compare updatedAt because change in every update)
-func compare{{cookiecutter.model_name}}WithoutUpdatedAt(a, b *model.Device) bool {
-	aux := new(model.Device)
+func compare{{cookiecutter.model_name.capitalize()}}sWithoutUpdatedAt(a, b *model.{{cookiecutter.model_name.capitalize()}}) bool {
+	aux := new(model.{{cookiecutter.model_name.capitalize()}})
 	*aux = *a
 	aux.UpdatedAt = b.UpdatedAt
 	return *aux == *b

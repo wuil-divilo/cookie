@@ -6,20 +6,20 @@ import (
 	"testing"
 )
 
-func Test_fromModelDevice(t *testing.T) {
+func Test_fromModel{{cookiecutter.model_name.capitalize()}}(t *testing.T) {
 	type args struct {
-		device *model.Device
+		{{cookiecutter.model_name}} *model.{{cookiecutter.model_name.capitalize()}}
 	}
 	tests := []struct {
 		name string
 		args args
-		want *deviceTable
+		want *{{cookiecutter.model_name}}Table
 	}{
 		{
-			name: "convert to device model",
+			name: "convert to {{cookiecutter.model_name}} model",
 			args: args{
-				device: &model.Device{
-					DeviceId:      "deviceId",
+				{{cookiecutter.model_name}}: &model.{{cookiecutter.model_name.capitalize()}}{
+					{{cookiecutter.model_name.capitalize()}}Id:      "{{cookiecutter.model_name}}Id",
 					Model:         "model",
 					HwVersion:     "hwversion",
 					OSVersion:     "osversion",
@@ -32,9 +32,9 @@ func Test_fromModelDevice(t *testing.T) {
 					UpdatedAt:     2,
 				},
 			},
-			want: &deviceTable{
-				DeviceId: "deviceId",
-				Meta: metaDeviceTable{
+			want: &{{cookiecutter.model_name}}Table{
+				{{cookiecutter.model_name.capitalize()}}Id: "{{cookiecutter.model_name}}Id",
+				Meta: meta{{cookiecutter.model_name.capitalize()}}Table{
 					Model:         "model",
 					HwVersion:     "hwversion",
 					OSVersion:     "osversion",
@@ -51,29 +51,29 @@ func Test_fromModelDevice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := fromModelDevice(tt.args.device)
+			got := fromModel{{cookiecutter.model_name.capitalize()}}(tt.args.{{cookiecutter.model_name}})
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("fromModelDevice() = %v, want %v", got, tt.want)
+				t.Errorf("fromModel{{cookiecutter.model_name.capitalize()}}() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_toModelDevice(t *testing.T) {
+func Test_toModel{{cookiecutter.model_name.capitalize()}}(t *testing.T) {
 	type args struct {
-		deviceTable *deviceTable
+		{{cookiecutter.model_name}}Table *{{cookiecutter.model_name}}Table
 	}
 	tests := []struct {
 		name string
 		args args
-		want *model.Device
+		want *model.{{cookiecutter.model_name.capitalize()}}
 	}{
 		{
 			name: "success",
 			args: args{
-				deviceTable: &deviceTable{
-					DeviceId: "deviceId",
-					Meta: metaDeviceTable{
+				{{cookiecutter.model_name}}Table: &{{cookiecutter.model_name}}Table{
+					{{cookiecutter.model_name.capitalize()}}Id: "{{cookiecutter.model_name}}Id",
+					Meta: meta{{cookiecutter.model_name.capitalize()}}Table{
 						Model:         "model",
 						HwVersion:     "hwversion",
 						OSVersion:     "osversion",
@@ -87,8 +87,8 @@ func Test_toModelDevice(t *testing.T) {
 					UpdatedAt: 2,
 				},
 			},
-			want: &model.Device{
-				DeviceId:      "deviceId",
+			want: &model.{{cookiecutter.model_name.capitalize()}}{
+				{{cookiecutter.model_name.capitalize()}}Id:      "{{cookiecutter.model_name}}Id",
 				Model:         "model",
 				HwVersion:     "hwversion",
 				OSVersion:     "osversion",
@@ -104,8 +104,8 @@ func Test_toModelDevice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := toModelDevice(tt.args.deviceTable); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("toModelDevice() = %v, want %v", got, tt.want)
+			if got := toModel{{cookiecutter.model_name.capitalize()}}(tt.args.{{cookiecutter.model_name}}Table); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("toModel{{cookiecutter.model_name.capitalize()}}() = %v, want %v", got, tt.want)
 			}
 		})
 	}

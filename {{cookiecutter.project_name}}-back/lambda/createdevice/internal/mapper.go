@@ -2,9 +2,9 @@ package internal
 
 import "github.com/divilo/{{cookiecutter.project_name}}-back/internal/model"
 
-func toModelDevice(dvcReq *model.CreateDeviceRequest) *model.Device {
-	return &model.Device{
-		DeviceId:      dvcReq.DeviceId,
+func toModel{{cookiecutter.model_name.capitalize()}}(dvcReq *model.Create{{cookiecutter.model_name.capitalize()}}Request) *model.{{cookiecutter.model_name.capitalize()}} {
+	return &model.{{cookiecutter.model_name.capitalize()}}{
+		{{cookiecutter.model_name.capitalize()}}Id:      dvcReq.{{cookiecutter.model_name.capitalize()}}Id,
 		Model:         dvcReq.Model,
 		HwVersion:     dvcReq.HardwareVersion,
 		OSVersion:     dvcReq.OperatingSystemVersion,
